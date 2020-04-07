@@ -5,14 +5,16 @@ const deck = require("./deck");
 const banner = require("./banner");
 const person = require("./Person");
 const players = require("./players.json");
+
 //variables
 let playerScore = 0;
 let dealerScore = 0;
 let playerCards = [];
 let dealerCards = [];
 let shoe = new deck();
-let playerName = "";
 let player = ""; //new person
+let hiddenCard = chalk.black.bgWhite("??");
+
 //Updates total score for both
 function updateScores() {
   playerScore = getScore(playerCards);
@@ -74,7 +76,7 @@ function getScore(cardArray) {
 //Logs the results of the game and prompts to start a new game or exit
 function whoWins(player) {
   if (playerScore > 21) {
-    console.log(`${playerName} has busted!`);
+    console.log(`${player.name} has busted!`);
     console.log("The Dealer has won");
     player.losses++;
     updatePlayer(player);
@@ -83,7 +85,7 @@ function whoWins(player) {
     }, 2000);
   } else if (dealerScore > 21) {
     console.log("The Dealer has busted!");
-    console.log(`${playerName} has won`);
+    console.log(`${player.name} has won`);
     player.wins++;
     updatePlayer(player);
     setTimeout(function () {
@@ -92,7 +94,7 @@ function whoWins(player) {
   } else if (playerScore <= 21 && dealerScore < 17) {
     return;
   } else if (playerScore > dealerScore) {
-    console.log(`${playerName} has won`);
+    console.log(`${player.name} has won`);
     player.wins++;
     updatePlayer(player);
     setTimeout(function () {
@@ -130,18 +132,18 @@ function playAgain(name) {
         type: "list",
         name: "action",
         message: chalk.bgWhite.black(
-          `\nGreat game ${playerName}\nWould you like to push your luck with another game?`
+          `\nGreat game ${player.name}\nWould you like to push your luck with another game?`
         ),
         choices: ["Yes", "No", "Check Score"],
       },
     ])
     .then(function (response) {
       if (response.action === "Yes") {
-        console.log(chalk.bgRed.black(`Another round, ${playerName}!`));
+        console.log(chalk.bgRed.black(`Another round, ${player.name}!`));
         startGame(name);
       } else if (response.action === "Check Score") {
         console.log(
-          `${playerName} has a record of: ${player.wins}-${player.losses}-${player.tie}`
+          `${player.name} has a record of: ${player.wins}-${player.losses}-${player.tie}`
         );
         setTimeout(function () {
           playAgain();
@@ -149,7 +151,7 @@ function playAgain(name) {
       } else {
         console.log(
           chalk.bgRed.black(
-            `Thanks for playing ${playerName.toString("").toUpperCase()}`
+            `Thanks for playing ${player.name.toString("").toUpperCase()}`
           )
         );
       }
@@ -180,6 +182,30 @@ function getAllCards(cardArr) {
   });
   return deckCard;
 }
+
+function playerAction() {
+  let lastCard = getCard(playerCards[playerCards.length - 1]);
+  console.log(`${player.name} was dealt ${lastCard}`);
+  console.log(`${player.name} has: 
+          ${getAllCards(playerCards)}\n`);
+  console.log(`\nThe Dealer has: 
+          ${hiddenCard}  ${getCard(dealerCards[1])} \n`);
+  console.log(
+    `${player.name} now has ${playerScore} and the dealer has ${dealerScore}`
+  );
+}
+
+function dealerAction() {
+  let lastCard = getCard(dealerCards[dealerCards.length - 1]);
+  console.log(`The dealer was dealt: ${lastCard}`);
+  console.log(`${player.name} has: 
+          ${getAllCards(playerCards)}\n`);
+  console.log(`\nThe Dealer has: 
+          ${getAllCards(dealerCards)}\n`);
+  console.log(
+    `${player.name} has ${playerScore} and the dealer has ${dealerScore}`
+  );
+}
 /*
 Initializes the actual game. This will set both hands to empty, create a deck and deal random cards
 The function will also prompt for user to hit or stay
@@ -193,26 +219,19 @@ function startGame() {
     console.log(getAllCards(shoe.deck));
     shoe.shuffle();
   }
-  let hiddenCard = "🃏";
   dealCards(playerCards);
   dealCards(dealerCards);
   dealCards(playerCards);
   dealCards(dealerCards);
   updatedPlayerScore();
-  let playerTurn = 1;
-  let dealerTurn = 1;
   setTimeout(function () {
-    console.log(`${playerName} has been dealt: 
-    ${getAllCards(playerCards)}\n${playerName} has ${playerScore}\n`);
-    // let pc = getAllCards(playerCards)
-    // console.log(pc);
+    console.log(`${player.name} has been dealt: 
+    ${getAllCards(playerCards)}\n${player.name} has ${playerScore}\n`);
   }, 500);
   setTimeout(function () {
-    console.log(
-      `\nThe Dealer has been dealt: 
-    ${hiddenCard}  ${getCard(dealerCards[1])} \nThe Dealer has ${dealerScore}`
-    );
-    ask(playerName);
+    console.log(`\nThe Dealer has been dealt: 
+    ${hiddenCard}  ${getCard(dealerCards[1])} \nThe Dealer has ${dealerScore}`);
+    ask(player.name);
   }, 1500);
   function ask() {
     inquirer
@@ -221,7 +240,7 @@ function startGame() {
           type: "list",
           name: "action",
           message: chalk.bgWhite.black(
-            `\n${playerName} currently has ${playerScore} \nWould you like to hit or stay?`
+            `\n${player.name} currently has ${playerScore} \nWould you like to hit or stay?`
           ),
           choices: ["Hit", "Stay"],
         },
@@ -229,20 +248,8 @@ function startGame() {
       .then(function (response) {
         if (response.action === "Hit") {
           dealCards(playerCards);
-          console.log(
-            `${playerName} was dealt ${getCard(playerCards[playerTurn + 1])}`
-          );
           updatedPlayerScore();
-          console.log(`${playerName} has: 
-          ${getAllCards(playerCards)}\n`);
-          console.log(
-            `\nThe Dealer has: 
-          ${hiddenCard}  ${getCard(dealerCards[1])} \n`
-          );
-          console.log(
-            `${playerName} now has ${playerScore} and the dealer has ${dealerScore}`
-          );
-          playerTurn++;
+          playerAction();
           if (playerScore <= 21) {
             setTimeout(function () {
               ask();
@@ -263,18 +270,7 @@ function startGame() {
               if (dealerScore >= 17) {
                 clearInterval(interval);
               } else {
-                dealCards(dealerCards),
-                  updateScores(),
-                  console.log(`${playerName} has: 
-                  ${getAllCards(playerCards)}\n`);
-                console.log(
-                  `\nThe Dealer has: 
-                    ${getAllCards(dealerCards)}\n`
-                );
-                console.log(
-                  `${playerName} now has ${playerScore} and the dealer has ${dealerScore}`
-                );
-                dealerTurn++;
+                dealCards(dealerCards), updateScores(), dealerAction();
                 whoWins(player);
               }
             }
@@ -321,8 +317,8 @@ function getName() {
       } else {
         player = players[key];
       }
-      playerName = player.name;
       startGame();
     });
 }
+
 getName();

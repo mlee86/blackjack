@@ -1,0 +1,27 @@
+{
+  "name": "Blackjack",
+  "version": "1.0.0",
+  "description": "This is a refactored version of Blackjack that I created for a programming class assignment. A win/loss record is kept for each name entered in players.json and this record can be viewed either during the game or by running the command line arguement to check scores.",
+  "main": "Person.js",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "inquirer": "^7.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node blackJack.js",
+    "score": "node scoreCheck.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlee86/blackjack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mlee86/blackjack/issues"
+  },
+  "homepage": "https://github.com/mlee86/blackjack#readme"
+}
