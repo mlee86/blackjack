@@ -1,1 +1,1 @@
-{"MATT":{"name":"Matt","wins":3,"losses":5,"tie":5},"TESTNAME":{"name":"test name","wins":1,"losses":1,"tie":0}}
+{"MATT":{"name":"Matt","wins":0,"losses":1,"tie":0,"hand":[{"suit":"♣","value":"6"},{"suit":"♥","value":"8"},{"suit":"♦","value":"A"}],"score":15,"money":90,"bet":10,"turn":2}}

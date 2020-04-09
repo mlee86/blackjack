@@ -9,7 +9,7 @@ const players = require("./players.json");
 //variables
 let shoe = new deck();
 let player = "";
-let dealer = new person("The Dealer")
+let dealer = new person("The Dealer");
 let hiddenCard = chalk.black.bgWhite("??");
 
 //Updates total score for both
@@ -71,7 +71,7 @@ function getScore(cardArray) {
   return score;
 }
 
-function checkStats(){
+function checkStats() {
   inquirer
     .prompt([
       {
@@ -84,12 +84,11 @@ function checkStats(){
       },
     ])
     .then(function () {
-    whatToDo();
-}
-)
+      whatToDo();
+    });
 }
 
-function addMoney(){
+function addMoney() {
   inquirer
     .prompt([
       {
@@ -104,15 +103,15 @@ function addMoney(){
       },
     ])
     .then(function (response) {
-      money = parseInt(response.wager.replace('$', ''))
-        player.money += money
-        console.log(`$${money} added to account.
+      money = parseInt(response.wager.replace("$", ""));
+      player.money += money;
+      console.log(`$${money} added to account.
         ${player.name} now has $${player.money}`);
-        whatToDo()
-})
+      whatToDo();
+    });
 }
 
-function whatToDo(){
+function whatToDo() {
   inquirer
     .prompt([
       {
@@ -126,15 +125,15 @@ function whatToDo(){
     ])
     .then(function (response) {
       if (response.action === "Play Blackjack") {
-        initialBet()
-      } 
-      if(response.action === "Check Stats"){
-        checkStats()
+        initialBet();
       }
-      if(response.action === "Add Money"){
-        addMoney()
+      if (response.action === "Check Stats") {
+        checkStats();
       }
-    })
+      if (response.action === "Add Money") {
+        addMoney();
+      }
+    });
 }
 //Logs the results of the game and prompts to start a new game or exit
 function whoWins(player) {
@@ -147,14 +146,14 @@ function whoWins(player) {
     console.log("The Dealer has busted!");
     console.log(`${player.name} has won $${player.bet}`);
     player.wins++;
-    player.money += (player.bet * 2)
+    player.money += player.bet * 2;
     updatePlayer(player);
   } else if (player.score <= 21 && dealer.score < 17) {
     return;
   } else if (player.score > dealer.score) {
     console.log(`${player.name} has won $${player.bet}`);
     player.wins++;
-    player.money += (player.bet * 2)
+    player.money += player.bet * 2;
     updatePlayer(player);
   } else if (player.score < dealer.score) {
     if (dealer.score === 21) {
@@ -168,14 +167,16 @@ function whoWins(player) {
     }
   } else {
     player.tie++;
-    player.money += player.bet
+    player.money += player.bet;
     updatePlayer(player);
     console.log("It's a push! The game is a tie!");
-    console.log(`${player.name} receives their original bet of $${player.bet} back`);
+    console.log(
+      `${player.name} receives their original bet of $${player.bet} back`
+    );
   }
-  setTimeout(function(){
-    whatToDo()
-  }, 2000)
+  setTimeout(function () {
+    whatToDo();
+  }, 2000);
 }
 
 function dealCards(player) {
@@ -214,7 +215,7 @@ function playerAction() {
   console.log(
     `${player.name} now has ${player.score} and the dealer has ${dealer.score}`
   );
-  console.log(`Current bet is: $${player.money}`)
+  console.log(`Current bet is: $${player.bet}`);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
@@ -228,11 +229,11 @@ function dealerAction() {
   console.log(
     `${player.name} has ${player.score} and the dealer has ${dealer.score}`
   );
-  console.log(`Current bet is: $${player.money}`)
+  console.log(`Current bet is: $${player.bet}`);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-function dealerTurn(){
+function dealerTurn() {
   updateScores();
   console.log(`The Dealer has: 
   ${getAllCards(dealer.hand)}
@@ -255,11 +256,11 @@ function dealerTurn(){
 }
 
 function ask() {
-  let options = []
-  if(player.turn > 1){
-    options = ["Hit", "Stay"]
+  let options = [];
+  if (player.turn > 1) {
+    options = ["Hit", "Stay"];
   } else {
-    options = ["Hit", "Stay", "Double Down"]
+    options = ["Hit", "Stay", "Double Down"];
   }
   inquirer
     .prompt([
@@ -279,7 +280,7 @@ function ask() {
         playerAction();
         if (player.score <= 21) {
           setTimeout(function () {
-            player.turn++
+            player.turn++;
             ask();
           }, 1500);
         } else {
@@ -287,9 +288,11 @@ function ask() {
             whoWins(player);
           }, 1500);
         }
-      } else if (response.action === "Double Down"){
-        if(player.money < player.bet){
-          console.log("You do not have enough money to double down, please select another option");
+      } else if (response.action === "Double Down") {
+        if (player.money < player.bet) {
+          console.log(
+            "You do not have enough money to double down, please select another option"
+          );
           ask();
         } else {
           player.money -= player.bet;
@@ -299,13 +302,12 @@ function ask() {
           playerAction();
           dealerTurn();
         }
-      }
-      else {
-       dealerTurn()
+      } else {
+        dealerTurn();
       }
     });
 }
-function initialBet(){
+function initialBet() {
   player.bet = 0;
   inquirer
     .prompt([
@@ -319,16 +321,18 @@ function initialBet(){
       },
     ])
     .then(function (response) {
-      wager = parseInt(response.wager.replace('$', ''))
+      wager = parseInt(response.wager.replace("$", ""));
       if (wager > player.money) {
-        console.log("You do not have that much money available, please select a smaller bet");
+        console.log(
+          "You do not have that much money available, please select a smaller bet"
+        );
         initialBet();
-      } else{
-        player.money -= wager
+      } else {
+        player.money -= wager;
         player.bet = wager;
         startGame();
       }
-})
+    });
 }
 
 /*
@@ -338,7 +342,7 @@ The function will also prompt for user to hit or stay
 function startGame() {
   player.hand = [];
   dealer.hand = [];
-  player.turn = 0
+  player.turn = 0;
   if (shoe.deck.length <= 26) {
     console.log("Time to shuffle the deck");
     shoe.reset();
@@ -391,11 +395,10 @@ function getName() {
         player = players[key];
       }
       // startGame();
-      if(player.money < 10){
-        player.money = 100
+      if (player.money < 10) {
+        player.money = 100;
       }
-      whatToDo()
-      
+      whatToDo();
     });
 }
 
