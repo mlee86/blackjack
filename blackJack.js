@@ -99,15 +99,20 @@ function addMoney() {
           Bank: ${player.money}
           How much money would you like to add to your bank?`
         ),
-        choices: ["$50", "$100", "$250", "$500", "$1000"],
+        choices: ["$50", "$100", "$250", "$500", "$1000", "BACK"],
       },
     ])
     .then(function (response) {
-      money = parseInt(response.wager.replace("$", ""));
-      player.money += money;
-      console.log(`$${money} added to account.
-        ${player.name} now has $${player.money}`);
-      whatToDo();
+      if (response.money === "BACK") {
+        whatToDo();
+      } else {
+        money = parseInt(response.money.replace("$", ""));
+        player.money += money;
+        console.log(
+          `$${money} added to account.\n${player.name} now has $${player.money}`
+        );
+        whatToDo();
+      }
     });
 }
 
