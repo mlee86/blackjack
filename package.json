@@ -5,7 +5,7 @@
   "main": "Person.js",
   "dependencies": {
     "chalk": "^4.0.0",
-    "inquirer": "^7.1.0"
+    "inquirer": "^12.10.0"
   },
   "devDependencies": {},
   "scripts": {
